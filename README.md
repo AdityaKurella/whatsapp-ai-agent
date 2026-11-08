@@ -1,27 +1,70 @@
 # WhatsApp AI Agent
 
-An n8n workflow for a WhatsApp assistant that handles text, image, and audio messages, can search the web and calculate, and can retrieve context from a Pinecone knowledge base.
+A multi-modal WhatsApp assistant built with **n8n**, integrating conversational AI, media handling, web search/calculation tools, and retrieval from a Pinecone knowledge base.
 
-## Included workflow
+> Portfolio project: demonstrates workflow orchestration and third-party API integration. This repository contains a workflow export; it is not a hosted service.
 
-- `WhatsApp_Agent.json` — 27-node workflow export.
+## At a glance
+
+| Area | Implementation |
+|---|---|
+| Orchestration | n8n |
+| Messaging | WhatsApp Business Cloud |
+| AI | OpenAI |
+| Knowledge retrieval | Pinecone |
+| Additional capabilities | Web search, calculations, image/audio message handling |
+| Workflow export | `WhatsApp_Agent.json` — 27 nodes |
+
+## Architecture
+
+```mermaid
+flowchart TD
+  A[WhatsApp message] --> B[n8n webhook and routing]
+  B --> C{Message type}
+  C -->|Text| D[AI assistant]
+  C -->|Image or audio| E[Media processing]
+  E --> D
+  D <--> F[Pinecone knowledge retrieval]
+  D <--> G[Search and calculation tools]
+  D --> H[WhatsApp response]
+```
+
+The diagram is a conceptual view of the documented capabilities; configure and verify each provider integration in your own n8n instance.
+
+## Repository contents
+
+- `WhatsApp_Agent.json` — importable 27-node n8n workflow export.
 
 ## Requirements
 
-- n8n with the WhatsApp Business Cloud, OpenAI, SERP API, Pinecone, and HTTP Header Auth integrations available.
-- WhatsApp Business Cloud app, phone number, and webhook configured for your n8n instance.
-- Pinecone index and any required MCP server endpoint.
+- A compatible n8n instance.
+- WhatsApp Business Cloud app, phone number, and webhook configuration.
+- OpenAI API access.
+- Pinecone index.
+- SERP/search API access and any required MCP server endpoint.
 
-## Import and configure
+## Setup
 
 1. Import `WhatsApp_Agent.json` into n8n.
-2. Create and assign credentials for WhatsApp, OpenAI, SERP API, Pinecone, and the authenticated media-download requests. The exported credential bindings were removed; select your own credentials on the affected nodes.
-3. Set your WhatsApp phone number ID, recipient/test destination, media API endpoint, Pinecone index, and MCP server endpoint.
-4. Configure the WhatsApp webhook with Meta and activate the workflow only after testing in your environment.
+2. Create your own n8n credentials for WhatsApp, OpenAI, search, Pinecone, and authenticated media requests.
+3. Assign the credentials to the corresponding nodes.
+4. Configure your phone-number ID, test recipient, media endpoint, Pinecone index, and MCP endpoint.
+5. Configure the Meta webhook and test with a non-production number before activation.
 
-The exported webhook and provider IDs have been regenerated or replaced with setup placeholders.
+Never commit API keys, access tokens, webhook secrets, or real customer data. Use n8n's credential store or an appropriate secret manager.
 
-## Notes
+## Validation status
 
-This repository contains a sanitized workflow export, not provider credentials, a Pinecone index, an MCP server, or a hosted n8n instance. Review each node and provider requirements before enabling live messaging.
+- Repository includes a sanitized workflow export.
+- A live end-to-end run against Meta, OpenAI, Pinecone, and the search provider is **not asserted by this README**.
+- Verify media download/binary handling, audio generation, provider limits, and failure paths in your own environment.
 
+## Limitations and next steps
+
+- Provider credentials and external services are not included.
+- Node behavior can vary with provider API versions and n8n node versions.
+- Add a short redacted execution demo and test evidence after runtime verification.
+
+## License
+
+No license is specified. Contact the repository owner before reusing this project.
